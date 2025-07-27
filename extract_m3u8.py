@@ -12,6 +12,7 @@ source_urls = {
     "marneulitv": "http://158.101.222.193:88/georgia_play.php?id=marneulitv",
     "Sahar": "https://sepehrtv.ir/live/sahar1",
     "beyaztv": "https://beyaztv.com.tr/canli-yayin",
+    "tv1000romantica": "https://ritsatv.ru/movie-id901238-romantica",
     # Digər kanallar əlavə edə bilərsən
 }
 
