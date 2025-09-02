@@ -11,6 +11,7 @@ source_urls = {
     "showturk": "https://www.showturk.com.tr/canli-yayin/showturk",
     "Quran": "https://aloula.sba.sa/live/qurantvsa",
     "beyaztv": "https://beyaztv.com.tr/canli-yayin",
+     "sahar": "https://sepehrtv.ir/live/sahar1",
     # Digər kanallar əlavə edə bilərsən
 }
 
