@@ -1,1 +1,8 @@
-#EXTM3U#EXT-X-VERSION:3Bu hissə pleyerə müxtəlif keyfiyyət seçimləri təklif edir.Exo2mod pleyeri adətən multivariant faylları daha yaxşı tanıyır.720p HD axın#EXT-X-STREAM-INF:BANDWIDTH=2000000,RESOLUTION=1280x720http://telepark.mark-clark.workers.dev/?ID=33480p SD axın#EXT-X-STREAM-INF:BANDWIDTH=1200000,RESOLUTION=854x480http://telepark.mark-clark.workers.dev/?ID=33360p SD axın#EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=640x360http://telepark.mark-clark.workers.dev/?ID=33
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=640x360,CODECS="avc1.64001e,mp4a.40.2"
+http://telepark.mark-clark.workers.dev/?ID=33
+#EXT-X-STREAM-INF:BANDWIDTH=1200000,RESOLUTION=842x480,CODECS="avc1.64001e,mp4a.40.2"
+http://telepark.mark-clark.workers.dev/?ID=33
+#EXT-X-STREAM-INF:BANDWIDTH=2000000,RESOLUTION=1280x720,CODECS="avc1.64001f,mp4a.40.2"
+http://telepark.mark-clark.workers.dev/?ID=33
