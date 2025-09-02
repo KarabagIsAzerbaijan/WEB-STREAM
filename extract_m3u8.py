@@ -12,6 +12,7 @@ source_urls = {
     "marneulitv": "http://158.101.222.193:88/georgia_play.php?id=marneulitv",
     "atvaz": "https://d-iptv.az/web-player#/tv/favorite/allChannel/channel/82/",
     "beyaztv": "https://beyaztv.com.tr/canli-yayin",
+    "sahar": "https://sepehrtv.ir/live/sahar1",
     # Digər kanallar əlavə edə bilərsən
 }
 
