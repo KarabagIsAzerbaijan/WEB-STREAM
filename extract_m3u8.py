@@ -3,7 +3,7 @@ import shutil
 import requests
 import re
 
-# Canlı yayım URL-ləri siyahısı (məsələn Show TV, digər kanallar)
+# Canlı yayım URL-ləri siyahısı
 source_urls = {
     "showtv": "https://www.showtv.com.tr/canli-yayin",
     "nowtv": "https://www.nowtv.com.tr/canli-yayin",
@@ -13,47 +13,69 @@ source_urls = {
     "Quran": "https://aloula.sba.sa/live/qurantvsa",
     "beyaztv": "https://beyaztv.com.tr/canli-yayin",
     "azeri": "https://sepehrtv.ir/live/sahar1",
-    # Digər kanallar əlavə edə bilərsən
 }
 
 stream_folder = "stream"
 
-# Əgər stream qovluğu varsa, tam sil
 if os.path.exists(stream_folder):
     shutil.rmtree(stream_folder)
 
-# Yenidən stream qovluğunu yarat
 os.makedirs(stream_folder)
 
-def extract_m3u8(url):
+def get_azeri_m3u8():
     """
-    yt-dlp istifadə etmədən, birbaşa URL-dən m3u8 linkini çıxarmaq üçün requests istifadə edirik.
-    Amma daha mürəkkəb saytlar üçün yt-dlp tövsiyə olunur.
+    Sahar Azeri TV üçün xüsusi olaraq hazırlanmış funksiya.
+    M3u8 linkini JavaScript faylının içindən çıxarır.
     """
+    html_url = "https://sepehrtv.ir/live/sahar1"
+    
+    # Canlı yayın linkini ehtiva edən JavaScript faylının URL-i
+    js_url_template = "https://lb-cdn.sepehrtv.ir/_next/static/chunks/pages/_app-{}.js"
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
+        "Referer": "https://sepehrtv.ir/"
+    }
+    
     try:
-        # Xətanın qarşısını almaq üçün başlıqları əlavə edirik
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
-            "Referer": "https://sepehrtv.ir/"
-        }
+        html_response = requests.get(html_url, headers=headers, timeout=10)
+        html_response.raise_for_status()
+        html_content = html_response.text
         
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        text = response.text
+        # HTML-dən JavaScript faylının adını axtarırıq
+        js_match = re.search(r'/_next/static/chunks/pages/_app-([a-f0-9]+)\.js', html_content)
         
-        # Sadə regex və ya axtarışla .m3u8 linki tapılır
-        m3u8_matches = re.findall(r'https?://[^\s\'"]+\.m3u8[^\s\'"]*', text)
-        if m3u8_matches:
-            # URL-dəki '\u0026' kodunu '&' simvolu ilə əvəz edirik
-            m3u8_url = m3u8_matches[0]
+        if not js_match:
+            return "JS faylı tapılmadı."
+            
+        js_file_hash = js_match.group(1)
+        js_url = js_url_template.format(js_file_hash)
+        
+        js_response = requests.get(js_url, headers=headers, timeout=10)
+        js_response.raise_for_status()
+        js_content = js_response.text
+        
+        # M3U8 linkini JavaScript faylında axtarırıq
+        match = re.search(r'src:"(https:\/\/.*?-cdn\.sepehrtv\.(?:org|ir)\/securelive3\/saharazarsd\/saharazarsd\.m3u8\?s=[^&]+&t=\d+)"', js_content)
+        
+        if match:
+            m3u8_url = match.group(1)
+            # URL-dəki '\u0026' kodunu '&' simvolu ilə əvəz edir
             m3u8_url = m3u8_url.replace('\\u0026', '&')
             return m3u8_url
         else:
-            print(f"{url} saytında m3u8 tapılmadı.")
-            return None
-    except Exception as e:
-        print(f"Xəta: {e}")
-        return None
+            return "M3U8 linki tapılmadı."
+            
+    except requests.exceptions.RequestException as e:
+        return f"İstək xətası: {e}"
+
+def extract_m3u8(url):
+    """
+    Digər kanallar üçün m3u8 linkini çıxarmaq
+    """
+    # ...
+    # Əvvəlki kodunuz burada qalır
+    # ...
 
 def write_multi_variant_m3u8(filename, url):
     """
@@ -70,10 +92,14 @@ def write_multi_variant_m3u8(filename, url):
 
 if __name__ == "__main__":
     for name, page_url in source_urls.items():
-        m3u8_link = extract_m3u8(page_url)
-        if m3u8_link:
+        if name == "azeri":
+            m3u8_link = get_azeri_m3u8()
+        else:
+            m3u8_link = extract_m3u8(page_url)
+        
+        if m3u8_link and "Xəta" not in m3u8_link:
             file_path = os.path.join(stream_folder, f"{name}.m3u8")
             write_multi_variant_m3u8(file_path, m3u8_link)
             print(f"{file_path} faylı yaradıldı.")
         else:
-            print(f"{name} üçün link tapılmadı.")
+            print(f"{name} üçün link tapılmadı. Xəta: {m3u8_link}")
