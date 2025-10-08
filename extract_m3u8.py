@@ -13,6 +13,7 @@ source_urls = {
     "Quran": "https://aloula.sba.sa/live/qurantvsa",
     "beyaztv": "https://beyaztv.com.tr/canli-yayin",
     "azeri": "https://sepehrtv.ir/live/sahar1",
+     "kpz": "http://www.kepeztv.az/",
     # Digər kanallar əlavə edə bilərsən
 }
 
